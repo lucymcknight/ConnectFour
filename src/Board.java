@@ -21,6 +21,50 @@ public class Board {
         }
     }
 
+    public Board(Board boardToCopy)
+    {
+        board = new char[NUM_COLS][NUM_ROWS];
+        for (int i = 0; i < NUM_COLS; i++) {
+            for (int j = 0; j < NUM_ROWS; j++) {
+                int playerAtPos = boardToCopy.getPlayerAtPosition(i+1,j+1);
+                if(playerAtPos == 1)
+                {
+                    board[i][j] = PLYR1_CHAR;
+                }
+                else if(playerAtPos == 2)
+                {
+                    board[i][j] = PLYR2_CHAR;
+                }
+                else
+                {
+                    board[i][j] = BLANK_CHAR;
+                }
+            }
+        }
+    }
+
+    public int getPlayerAtPosition(int x, int y)
+    {
+        if(x <= 0 || y <= 0 || x > NUM_COLS || y > NUM_ROWS)
+        {
+            return -1;
+        }
+        char piece = board[x-1][y-1];
+        if(piece == BLANK_CHAR)
+        {
+            return 0;
+        }
+        if(piece == PLYR1_CHAR)
+        {
+            return 1;
+        }
+        if(piece == PLYR2_CHAR)
+        {
+            return 2;
+        }
+        return -2;
+    }
+
     public boolean colFree(int position) {
         if(position > 0 && position <= NUM_COLS)
         {
@@ -167,6 +211,133 @@ public class Board {
             }
         }
         return longestStreakSoFar;
+    }
+
+    //not the most efficient but works well enough
+    //may be improved later
+    public int longestOpenStreakForPlayer(int player)
+    {
+        char sym = PLYR1_CHAR;
+        if(player == 2)
+        {
+            sym = PLYR2_CHAR;
+        }
+        int longestOpenStreakSoFar = 0;
+        for(int i=0; i<NUM_COLS; i++)
+        {
+            for(int j=0; j<NUM_ROWS; j++)
+            {
+                if(board[i][j] == sym)
+                {
+                    //check vertical
+                    int jToCheck = j+1;
+                    int curStreak = 1;
+                    boolean streakOver = false;
+                    while(!streakOver && jToCheck<NUM_ROWS)
+                    {
+                        if(board[i][jToCheck] == sym)
+                        {
+                            jToCheck++;
+                            curStreak++;
+                        }
+                        else
+                        {
+                            streakOver = true;
+                        }
+                    }
+                    if(jToCheck < NUM_ROWS && board[i][jToCheck] == BLANK_CHAR && curStreak > longestOpenStreakSoFar)
+                    {
+                        longestOpenStreakSoFar = curStreak;
+                    }
+
+                    //check horizontal
+                    int iToCheck = i+1;
+                    curStreak = 1;
+                    streakOver = false;
+                    while(!streakOver && iToCheck<NUM_COLS)
+                    {
+                        if(board[iToCheck][j] == sym)
+                        {
+                            iToCheck++;
+                            curStreak++;
+                        }
+                        else
+                        {
+                            streakOver = true;
+                        }
+                    }
+                    if(iToCheck < NUM_COLS && board[iToCheck][j] == BLANK_CHAR && curStreak > longestOpenStreakSoFar)
+                    {
+                        //open space to right of streak
+                        longestOpenStreakSoFar = curStreak;
+                    }
+                    if(i-1 >= 0 && board[i-1][j] == BLANK_CHAR && curStreak > longestOpenStreakSoFar)
+                    {
+                        //open space to left of streak
+                        longestOpenStreakSoFar = curStreak;
+                    }
+
+                    //check right diag
+                    iToCheck = i+1;
+                    jToCheck = j+1;
+                    curStreak = 1;
+                    streakOver = false;
+                    while(!streakOver && iToCheck<NUM_COLS && jToCheck<NUM_ROWS)
+                    {
+                        if(board[iToCheck][jToCheck] == sym)
+                        {
+                            iToCheck++;
+                            jToCheck++;
+                            curStreak++;
+                        }
+                        else
+                        {
+                            streakOver = true;
+                        }
+                    }
+                    if(iToCheck<NUM_COLS && jToCheck<NUM_ROWS && board[iToCheck][jToCheck] == BLANK_CHAR && curStreak > longestOpenStreakSoFar)
+                    {
+                        //open space to right of streak
+                        longestOpenStreakSoFar = curStreak;
+                    }
+                    if(i-1>=0 && j-1>=0 && board[i-1][j-1] == BLANK_CHAR &&curStreak > longestOpenStreakSoFar)
+                    {
+                        //open space to left of streak
+                        longestOpenStreakSoFar = curStreak;
+                    }
+
+                    //check left diag
+                    iToCheck = i-1;
+                    jToCheck = j+1;
+                    curStreak = 1;
+                    streakOver = false;
+                    while(!streakOver && iToCheck>=0 && jToCheck<NUM_ROWS)
+                    {
+                        if(board[iToCheck][jToCheck] == sym)
+                        {
+                            iToCheck--;
+                            jToCheck++;
+                            curStreak++;
+                        }
+                        else
+                        {
+                            streakOver = true;
+                        }
+                    }
+                    if(iToCheck>=0 && jToCheck<NUM_ROWS && board[iToCheck][jToCheck] == BLANK_CHAR && curStreak > longestOpenStreakSoFar)
+                    {
+                        //open space to left of streak
+                        longestOpenStreakSoFar = curStreak;
+                    }
+                    if(i+1<NUM_COLS && j-1>=0 && board[i+1][j-1] == BLANK_CHAR && curStreak > longestOpenStreakSoFar)
+                    {
+                        //open space to left of streak
+                        longestOpenStreakSoFar = curStreak;
+                    }
+                }
+            }
+        }
+        return longestOpenStreakSoFar;
     }
 
     //-1 if no winner

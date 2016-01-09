@@ -8,15 +8,15 @@ public class Game
     private Board board;
     private boolean playersTurn;
     private Scanner input;
+    private AI ai;
 
     public Game()
     {
         board = new Board();
         playersTurn = true;
         input = new Scanner(System.in);
+        ai = new AI();
     }
-
-
 
     public int runGame()
     {
@@ -48,10 +48,6 @@ public class Game
 
     public void takePlayer2Turn()
     {
-        System.out.println("[P2] Enter a valid move.");
-        while(!board.addPiece(2, input.nextInt()))
-        {
-            System.out.println("[P2] Enter a valid move.");
-        }
+        board.addPiece(2, ai.getMoveForBoardAndPlayer(board,2));
     }
 }
