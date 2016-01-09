@@ -6,28 +6,15 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args)
     {
-        System.out.println("Hello world!\n\n");
-
-        Board b = new Board();
-
-        Scanner sc = new Scanner(System.in);
-        boolean pl1 = true;
-        while(true)
+        Game game = new Game();
+        int result = game.runGame();
+        if(result == -1)
         {
-            System.out.println(b);
-            boolean success = false;
-            if(pl1)
-            {
-                success = b.addPiece(1,sc.nextInt());
-            }
-            else
-            {
-                success = b.addPiece(2,sc.nextInt());
-            }
-            if(success)
-            {
-                pl1 = !pl1;
-            }
+            System.out.println("DRAW!");
+        }
+        else
+        {
+            System.out.println("WINNER: PLAYER " + result + "!");
         }
     }
 }
